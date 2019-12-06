@@ -164,8 +164,8 @@ enum { PRIMARY, NUMPAD, FUNCTION }; // layers
 
 */
 
-#define PRIMARY_KEYMAP_QWERTY
-// #define PRIMARY_KEYMAP_COLEMAK
+// #define PRIMARY_KEYMAP_QWERTY
+#define PRIMARY_KEYMAP_COLEMAK
 // #define PRIMARY_KEYMAP_DVORAK
 // #define PRIMARY_KEYMAP_CUSTOM
 
@@ -218,14 +218,14 @@ KEYMAPS(
    Key_Backtick, Key_Q, Key_W, Key_F, Key_P, Key_G, Key_Tab,
    Key_PageUp,   Key_A, Key_R, Key_S, Key_T, Key_D,
    Key_PageDown, Key_Z, Key_X, Key_C, Key_V, Key_B, Key_Escape,
-   OSM(Key_LeftControl), Key_Backspace, OSM(Key_LeftGui), OSM(Key_LeftShift),
+   OSM(LeftControl), Key_Backspace, OSM(LeftGui), OSM(LeftShift),
    ShiftToLayer(FUNCTION),
 
    M(MACRO_ANY),  Key_6, Key_7, Key_8,     Key_9,         Key_0,         LockLayer(NUMPAD),
    Key_Enter,     Key_J, Key_L, Key_U,     Key_Y,         Key_Semicolon, Key_Equals,
                   Key_H, Key_N, Key_E,     Key_I,         Key_O,         Key_Quote,
    Key_RightAlt,  Key_K, Key_M, Key_Comma, Key_Period,    Key_Slash,     Key_Minus,
-   OSM(Key_RightShift), OSM(Key_LeftAlt), Key_Spacebar, OSM(Key_RightControl),
+   OSM(RightShift), OSM(LeftAlt), Key_Spacebar, OSM(RightControl),
    ShiftToLayer(FUNCTION)),
 
 #elif defined (PRIMARY_KEYMAP_CUSTOM)
@@ -578,7 +578,7 @@ void setup() {
   ColormapEffect.max_layers(5);
 
   // mine
-  LEDDigitalRainEffect.activate();
+  //LEDDigitalRainEffect.activate();
 }
 
 /** loop is the second of the standard Arduino sketch functions.
