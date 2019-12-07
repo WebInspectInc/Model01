@@ -95,7 +95,8 @@
 */
 
 enum { MACRO_VERSION_INFO,
-       MACRO_ANY
+       MACRO_ANY,
+       MACRO_HYPER
      };
 
 
@@ -214,7 +215,7 @@ KEYMAPS(
 #elif defined (PRIMARY_KEYMAP_COLEMAK)
 
   [PRIMARY] = KEYMAP_STACKED
-  (___,          Key_1, Key_2, Key_3, Key_4, Key_5, Key_LEDEffectNext,
+  (___,          Key_1, Key_2, Key_3, Key_4, Key_5, M(MACRO_HYPER),
    Key_Backtick, Key_Q, Key_W, Key_F, Key_P, Key_G, Key_Tab,
    Key_PageUp,   Key_A, Key_R, Key_S, Key_T, Key_D,
    Key_PageDown, Key_Z, Key_X, Key_C, Key_V, Key_B, Key_Escape,
@@ -269,7 +270,7 @@ KEYMAPS(
    ___),
 
   [FUNCTION] =  KEYMAP_STACKED
-  (___,      Key_F1,           Key_F2,      Key_F3,     Key_F4,        Key_F5,           Key_CapsLock,
+  (___,      Key_F1,           Key_F2,      Key_F3,     Key_F4,        Key_F5,           Key_LEDEffectNext,
    Key_Tab,  ___,              Key_mouseUp, ___,        Key_mouseBtnR, Key_mouseWarpEnd, Key_mouseWarpNE,
    Key_Home, Key_mouseL,       Key_mouseDn, Key_mouseR, Key_mouseBtnL, Key_mouseWarpNW,
    Key_End,  Key_PrintScreen,  Key_Insert,  ___,        Key_mouseBtnM, Key_mouseWarpSW,  Key_mouseWarpSE,
@@ -319,6 +320,13 @@ static void anyKeyMacro(uint8_t keyState) {
     kaleidoscope::hid::pressKey(lastKey, toggledOn);
 }
 
+static void OneShotHyper(uint8_t keyState) {
+  handleKeyswitchEvent(OSM(LeftShift), UNKNOWN_KEYSWITCH_LOCATION, keyState);
+  handleKeyswitchEvent(OSM(LeftControl), UNKNOWN_KEYSWITCH_LOCATION, keyState);
+  handleKeyswitchEvent(OSM(LeftAlt), UNKNOWN_KEYSWITCH_LOCATION, keyState);
+  handleKeyswitchEvent(OSM(LeftGui), UNKNOWN_KEYSWITCH_LOCATION, keyState);
+}
+
 
 /** macroAction dispatches keymap events that are tied to a macro
     to that macro. It takes two uint8_t parameters.
@@ -342,6 +350,10 @@ const macro_t *macroAction(uint8_t macroIndex, uint8_t keyState) {
     case MACRO_ANY:
       anyKeyMacro(keyState);
       break;
+
+    case MACRO_HYPER:
+      OneShotHyper(keyState);
+      break;
   }
   return MACRO_NONE;
 }
@@ -352,6 +364,8 @@ const macro_t *macroAction(uint8_t macroIndex, uint8_t keyState) {
 // LED color modes calibrated to draw 500mA or less on the
 // Keyboardio Model 01.
 
+
+static kaleidoscope::plugin::LEDSolidColor tWhite(200, 200, 200);
 
 static kaleidoscope::plugin::LEDSolidColor solidRed(160, 0, 0);
 static kaleidoscope::plugin::LEDSolidColor solidOrange(140, 70, 0);
@@ -468,6 +482,8 @@ KALEIDOSCOPE_INIT_PLUGINS(
 
   // We start with the LED effect that turns off all the LEDs.
   LEDOff,
+
+  tWhite,
 
   // The rainbow effect changes the color of all of the keyboard's keys at the same time
   // running through all the colors of the rainbow.
