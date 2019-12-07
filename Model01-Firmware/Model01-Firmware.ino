@@ -79,6 +79,7 @@
 #include "Kaleidoscope-OneShot.h"
 #include "Kaleidoscope-Escape-OneShot.h"
 
+#include <Kaleidoscope-LED-ActiveModColor.h>
 #include <Kaleidoscope-LEDEffect-DigitalRain.h>
 
 /** This 'enum' is a list of all the macros used by the Model 01's firmware
@@ -545,7 +546,8 @@ KALEIDOSCOPE_INIT_PLUGINS(
   // Mine
   OneShot,
   EscapeOneShot,
-  LEDDigitalRainEffect
+  LEDDigitalRainEffect,
+  ActiveModColorEffect
 );
 
 /** The 'setup' function is one of the two standard Arduino sketch functions.
@@ -594,7 +596,7 @@ void setup() {
   ColormapEffect.max_layers(5);
 
   // mine
-  //LEDDigitalRainEffect.activate();
+  ActiveModColorEffect.highlight_color = CRGB(0x00, 0xff, 0xff);
 }
 
 /** loop is the second of the standard Arduino sketch functions.
