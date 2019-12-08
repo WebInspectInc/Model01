@@ -97,7 +97,9 @@
 
 enum { MACRO_VERSION_INFO,
        MACRO_ANY,
-       MACRO_HYPER
+       MACRO_HYPER,
+       TAB_LEFT,
+       TAB_RIGHT
      };
 
 
@@ -271,10 +273,10 @@ KEYMAPS(
    ___),
 
   [FUNCTION] =  KEYMAP_STACKED
-  (___,      Key_F1,           Key_F2,      Key_F3,     Key_F4,        Key_F5,           Key_LEDEffectNext,
-   Key_Tab,  ___,              Key_mouseUp, ___,        Key_mouseBtnR, Key_mouseWarpEnd, Key_mouseWarpNE,
-   Key_Home, Key_mouseL,       Key_mouseDn, Key_mouseR, Key_mouseBtnL, Key_mouseWarpNW,
-   Key_End,  Key_PrintScreen,  Key_Insert,  ___,        Key_mouseBtnM, Key_mouseWarpSW,  Key_mouseWarpSE,
+  (___,      Key_F1,           Key_F2,      Key_F3,       Key_F4,        Key_F5,           Key_LEDEffectNext,
+   Key_Tab,  M(TAB_LEFT),      Key_mouseUp, M(TAB_RIGHT), Key_mouseBtnR, Key_mouseWarpEnd, Key_mouseWarpNE,
+   Key_Home, Key_mouseL,       Key_mouseDn, Key_mouseR,   Key_mouseBtnL, Key_mouseWarpNW,
+   Key_End,  Key_PrintScreen,  Key_Insert,  ___,          Key_mouseBtnM, Key_mouseWarpSW,  Key_mouseWarpSE,
    ___, Key_Delete, ___, ___,
    ___,
 
@@ -354,6 +356,14 @@ const macro_t *macroAction(uint8_t macroIndex, uint8_t keyState) {
 
     case MACRO_HYPER:
       OneShotHyper(keyState);
+      break;
+
+    case TAB_LEFT:
+      return MACRODOWN(D(LeftGui), D(LeftShift), D(LeftBracket));
+      break;
+
+    case TAB_RIGHT:
+      return MACRODOWN(D(LeftGui), D(LeftShift), D(RightBracket));
       break;
   }
   return MACRO_NONE;
