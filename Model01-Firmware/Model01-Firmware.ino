@@ -170,7 +170,6 @@ enum { PRIMARY, NUMPAD, FUNCTION }; // layers
 
 // #define PRIMARY_KEYMAP_QWERTY
 #define PRIMARY_KEYMAP_COLEMAK
-// #define PRIMARY_KEYMAP_DVORAK
 // #define PRIMARY_KEYMAP_CUSTOM
 
 
@@ -195,23 +194,6 @@ KEYMAPS(
    Key_Enter,     Key_Y, Key_U, Key_I,     Key_O,         Key_P,         Key_Equals,
                   Key_H, Key_J, Key_K,     Key_L,         Key_Semicolon, Key_Quote,
    Key_RightAlt,  Key_N, Key_M, Key_Comma, Key_Period,    Key_Slash,     Key_Minus,
-   Key_RightShift, Key_LeftAlt, Key_Spacebar, Key_RightControl,
-   ShiftToLayer(FUNCTION)),
-
-#elif defined (PRIMARY_KEYMAP_DVORAK)
-
-  [PRIMARY] = KEYMAP_STACKED
-  (___,          Key_1,         Key_2,     Key_3,      Key_4, Key_5, Key_LEDEffectNext,
-   Key_Backtick, Key_Quote,     Key_Comma, Key_Period, Key_P, Key_Y, Key_Tab,
-   Key_PageUp,   Key_A,         Key_O,     Key_E,      Key_U, Key_I,
-   Key_PageDown, Key_Semicolon, Key_Q,     Key_J,      Key_K, Key_X, Key_Escape,
-   Key_LeftControl, Key_Backspace, Key_LeftGui, Key_LeftShift,
-   ShiftToLayer(FUNCTION),
-
-   M(MACRO_ANY),   Key_6, Key_7, Key_8, Key_9, Key_0, LockLayer(NUMPAD),
-   Key_Enter,      Key_F, Key_G, Key_C, Key_R, Key_L, Key_Slash,
-                   Key_D, Key_H, Key_T, Key_N, Key_S, Key_Minus,
-   Key_RightAlt,   Key_B, Key_M, Key_W, Key_V, Key_Z, Key_Equals,
    Key_RightShift, Key_LeftAlt, Key_Spacebar, Key_RightControl,
    ShiftToLayer(FUNCTION)),
 
@@ -254,7 +236,6 @@ KEYMAPS(
 #error "No default keymap defined. You should make sure that you have a line like '#define PRIMARY_KEYMAP_QWERTY' in your sketch"
 
 #endif
-
 
 
   [NUMPAD] =  KEYMAP_STACKED
