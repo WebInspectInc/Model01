@@ -211,7 +211,7 @@ KEYMAPS(
    Key_Enter,     Key_J, Key_L, Key_U,     Key_Y,         Key_Semicolon, Key_Equals,
                   Key_H, Key_N, Key_E,     Key_I,         Key_O,         Key_Quote,
    Key_RightAlt,  Key_K, Key_M, Key_Comma, Key_Period,    Key_Slash,     Key_Minus,
-   OSM(RightShift), OSM(LeftAlt), Key_Spacebar, OSM(RightControl),
+   OSM(RightShift), OSM(LeftAlt), Key_Spacebar, OSM(RightGui),
    ShiftToLayer(FUNCTION)),
 
 #elif defined (PRIMARY_KEYMAP_CUSTOM)
