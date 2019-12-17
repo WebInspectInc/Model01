@@ -99,7 +99,8 @@ enum { MACRO_VERSION_INFO,
        MACRO_ANY,
        MACRO_HYPER,
        TAB_LEFT,
-       TAB_RIGHT
+       TAB_RIGHT,
+       LEDS_OFF
      };
 
 
@@ -200,10 +201,10 @@ KEYMAPS(
 #elif defined (PRIMARY_KEYMAP_COLEMAK)
 
   [PRIMARY] = KEYMAP_STACKED
-  (___,          Key_1, Key_2, Key_3, Key_4, Key_5, M(MACRO_HYPER),
+  (___,          Key_1, Key_2, Key_3, Key_4, Key_5, Key_LEDEffectNext,
    Key_Backtick, Key_Q, Key_W, Key_F, Key_P, Key_G, Key_Tab,
-   Key_PageUp,   Key_A, Key_R, Key_S, Key_T, Key_D,
-   Key_PageDown, Key_Z, Key_X, Key_C, Key_V, Key_B, Key_Escape,
+   Key_mouseScrollDn,   Key_A, Key_R, Key_S, Key_T, Key_D,
+   Key_mouseScrollUp, Key_Z, Key_X, Key_C, Key_V, Key_B, Key_Escape,
    OSM(LeftControl), Key_Backspace, OSM(LeftGui), OSM(LeftShift),
    ShiftToLayer(FUNCTION),
 
@@ -211,7 +212,7 @@ KEYMAPS(
    Key_Enter,     Key_J, Key_L, Key_U,     Key_Y,         Key_Semicolon, Key_Equals,
                   Key_H, Key_N, Key_E,     Key_I,         Key_O,         Key_Quote,
    Key_RightAlt,  Key_K, Key_M, Key_Comma, Key_Period,    Key_Slash,     Key_Minus,
-   OSM(RightShift), OSM(LeftAlt), Key_Spacebar, OSM(RightGui),
+   OSM(RightShift), OSM(LeftAlt), Key_Spacebar, M(MACRO_HYPER),
    ShiftToLayer(FUNCTION)),
 
 #elif defined (PRIMARY_KEYMAP_CUSTOM)
@@ -254,7 +255,7 @@ KEYMAPS(
    ___),
 
   [FUNCTION] =  KEYMAP_STACKED
-  (___,      Key_F1,           Key_F2,      Key_F3,       Key_F4,        Key_F5,           Key_LEDEffectNext,
+  (___,      Key_F1,           Key_F2,      Key_F3,       Key_F4,        Key_F5,           M(LEDS_OFF),
    Key_Tab,  M(TAB_LEFT),      Key_mouseUp, M(TAB_RIGHT), Key_mouseBtnR, Key_mouseWarpEnd, Key_mouseWarpNE,
    Key_Home, Key_mouseL,       Key_mouseDn, Key_mouseR,   Key_mouseBtnL, Key_mouseWarpNW,
    Key_End,  Key_PrintScreen,  Key_Insert,  ___,          Key_mouseBtnM, Key_mouseWarpSW,  Key_mouseWarpSE,
@@ -311,6 +312,12 @@ static void OneShotHyper(uint8_t keyState) {
   handleKeyswitchEvent(OSM(LeftGui), UNKNOWN_KEYSWITCH_LOCATION, keyState);
 }
 
+static void turnLEDsOff(uint8_t key_state) {
+  if (keyToggledOn(key_state)) {
+    LEDOff.activate();
+  }
+}
+
 
 /** macroAction dispatches keymap events that are tied to a macro
     to that macro. It takes two uint8_t parameters.
@@ -345,6 +352,10 @@ const macro_t *macroAction(uint8_t macroIndex, uint8_t keyState) {
 
     case TAB_RIGHT:
       return MACRODOWN(D(LeftGui), D(LeftShift), D(RightBracket));
+      break;
+
+    case LEDS_OFF:
+      turnLEDsOff(keyState);
       break;
   }
   return MACRO_NONE;
