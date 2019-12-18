@@ -98,6 +98,7 @@
 enum { MACRO_VERSION_INFO,
        MACRO_ANY,
        MACRO_HYPER,
+       MACRO_MEH,
        TAB_LEFT,
        TAB_RIGHT,
        LEDS_OFF
@@ -208,7 +209,7 @@ KEYMAPS(
    OSM(LeftControl), Key_Backspace, OSM(LeftGui), OSM(LeftShift),
    ShiftToLayer(FUNCTION),
 
-   M(MACRO_ANY),  Key_6, Key_7, Key_8,     Key_9,         Key_0,         LockLayer(NUMPAD),
+   M(MACRO_MEH),  Key_6, Key_7, Key_8,     Key_9,         Key_0,         LockLayer(NUMPAD),
    Key_Enter,     Key_J, Key_L, Key_U,     Key_Y,         Key_Semicolon, Key_Equals,
                   Key_H, Key_N, Key_E,     Key_I,         Key_O,         Key_Quote,
    Key_RightAlt,  Key_K, Key_M, Key_Comma, Key_Period,    Key_Slash,     Key_Minus,
@@ -312,6 +313,12 @@ static void OneShotHyper(uint8_t keyState) {
   handleKeyswitchEvent(OSM(LeftGui), UNKNOWN_KEYSWITCH_LOCATION, keyState);
 }
 
+static void OneShotMeh(uint8_t keyState) {
+  handleKeyswitchEvent(OSM(LeftControl), UNKNOWN_KEYSWITCH_LOCATION, keyState);
+  handleKeyswitchEvent(OSM(LeftAlt), UNKNOWN_KEYSWITCH_LOCATION, keyState);
+  handleKeyswitchEvent(OSM(LeftGui), UNKNOWN_KEYSWITCH_LOCATION, keyState);
+}
+
 static void turnLEDsOff(uint8_t key_state) {
   if (keyToggledOn(key_state)) {
     LEDOff.activate();
@@ -344,6 +351,10 @@ const macro_t *macroAction(uint8_t macroIndex, uint8_t keyState) {
 
     case MACRO_HYPER:
       OneShotHyper(keyState);
+      break;
+
+    case MACRO_MEH:
+      OneShotMeh(keyState);
       break;
 
     case TAB_LEFT:
