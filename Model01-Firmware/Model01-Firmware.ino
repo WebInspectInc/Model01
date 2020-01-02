@@ -80,7 +80,7 @@
 #include "Kaleidoscope-Escape-OneShot.h"
 
 #include <Kaleidoscope-LED-ActiveModColor.h>
-#include <Kaleidoscope-LEDEffect-DigitalRain.h>
+#include <Kaleidoscope-TapDance.h>
 
 /** This 'enum' is a list of all the macros used by the Model 01's firmware
     The names aren't particularly important. What is important is that each
@@ -209,10 +209,10 @@ KEYMAPS(
    OSM(LeftControl), Key_Backspace, OSM(LeftGui), OSM(LeftShift),
    ShiftToLayer(FUNCTION),
 
-   M(MACRO_MEH),  Key_6, Key_7, Key_8,     Key_9,         Key_0,         LockLayer(NUMPAD),
+   Key_RightAlt,  Key_6, Key_7, Key_8,     Key_9,         Key_0,         LockLayer(NUMPAD),
    Key_Enter,     Key_J, Key_L, Key_U,     Key_Y,         Key_Semicolon, Key_Equals,
                   Key_H, Key_N, Key_E,     Key_I,         Key_O,         Key_Quote,
-   Key_RightAlt,  Key_K, Key_M, Key_Comma, Key_Period,    Key_Slash,     Key_Minus,
+   M(MACRO_MEH),  Key_K, Key_M, Key_Comma, Key_Period,    Key_Slash,     Key_Minus,
    OSM(RightShift), OSM(LeftAlt), Key_Spacebar, M(MACRO_HYPER),
    ShiftToLayer(FUNCTION)),
 
@@ -264,7 +264,7 @@ KEYMAPS(
    ___,
 
    Consumer_ScanPreviousTrack, Key_F6,                 Key_F7,                   Key_F8,                   Key_F9,          Key_F10,          Key_F11,
-   Consumer_PlaySlashPause,    Consumer_ScanNextTrack, Key_LeftCurlyBracket,     Key_RightCurlyBracket,    Key_LeftBracket, Key_RightBracket, Key_F12,
+   Consumer_PlaySlashPause,    Consumer_ScanNextTrack, TD(0),                    TD(1),                    ___,             ___,              Key_F12,
                                Key_LeftArrow,          Key_DownArrow,            Key_UpArrow,              Key_RightArrow,  ___,              ___,
    Key_PcApplication,          Consumer_Mute,          Consumer_VolumeDecrement, Consumer_VolumeIncrement, ___,             Key_Backslash,    Key_Pipe,
    ___, ___, Key_Enter, ___,
@@ -322,6 +322,20 @@ static void OneShotMeh(uint8_t keyState) {
 static void turnLEDsOff(uint8_t key_state) {
   if (keyToggledOn(key_state)) {
     LEDOff.activate();
+  }
+}
+
+void tapDanceAction(uint8_t tap_dance_index, byte row, byte col, uint8_t tap_count,
+                    kaleidoscope::plugin::TapDance::ActionType tap_dance_action) {
+  switch (tap_dance_index) {
+    case 0:
+      return tapDanceActionKeys(tap_count, tap_dance_action,
+                                Key_LeftBracket, Key_LeftParen);
+    break;
+    case 1:
+      return tapDanceActionKeys(tap_count, tap_dance_action,
+                                Key_RightBracket, Key_RightParen);
+    break;
   }
 }
 
@@ -559,8 +573,8 @@ KALEIDOSCOPE_INIT_PLUGINS(
   // Mine
   OneShot,
   EscapeOneShot,
-  LEDDigitalRainEffect,
-  ActiveModColorEffect
+  ActiveModColorEffect,
+  TapDance
 );
 
 /** The 'setup' function is one of the two standard Arduino sketch functions.
