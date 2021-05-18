@@ -7,6 +7,7 @@
 #define BUILD_INFORMATION "locally built"
 #endif
 
+#define WITH_PROGMEM_KEYMAP 0
 
 /**
    These #include directives pull in the Kaleidoscope firmware core,
@@ -157,49 +158,14 @@ enum { MACRO_VERSION_INFO,
 enum { PRIMARY, NUMPAD, FUNCTION }; // layers
 
 
-/**
-    To change your keyboard's layout from QWERTY to DVORAK or COLEMAK, comment out the line
-
-    #define PRIMARY_KEYMAP_QWERTY
-
-    by changing it to
-
-    // #define PRIMARY_KEYMAP_QWERTY
-
-    Then uncomment the line corresponding to the layout you want to use.
-
-*/
-
-// #define PRIMARY_KEYMAP_QWERTY
 #define PRIMARY_KEYMAP_COLEMAK
 
 
-
-/* This comment temporarily turns off astyle's indent enforcement
-     so we can make the keymaps actually resemble the physical key layout better
-*/
 // *INDENT-OFF*
 
+#if WITH_PROGMEM_KEYMAP
+
 KEYMAPS(
-
-#if defined (PRIMARY_KEYMAP_QWERTY)
-  [PRIMARY] = KEYMAP_STACKED
-  (___,          Key_1, Key_2, Key_3, Key_4, Key_5, Key_LEDEffectNext,
-   Key_Backtick, Key_Q, Key_W, Key_E, Key_R, Key_T, Key_Tab,
-   Key_PageUp,   Key_A, Key_S, Key_D, Key_F, Key_G,
-   Key_PageDown, Key_Z, Key_X, Key_C, Key_V, Key_B, Key_Escape,
-   Key_LeftControl, Key_Backspace, Key_LeftGui, Key_LeftShift,
-   ShiftToLayer(FUNCTION),
-
-   M(MACRO_ANY),  Key_6, Key_7, Key_8,     Key_9,         Key_0,         LockLayer(NUMPAD),
-   Key_Enter,     Key_Y, Key_U, Key_I,     Key_O,         Key_P,         Key_Equals,
-                  Key_H, Key_J, Key_K,     Key_L,         Key_Semicolon, Key_Quote,
-   Key_RightAlt,  Key_N, Key_M, Key_Comma, Key_Period,    Key_Slash,     Key_Minus,
-   Key_RightShift, Key_LeftAlt, Key_Spacebar, Key_RightControl,
-   ShiftToLayer(FUNCTION)),
-
-#elif defined (PRIMARY_KEYMAP_COLEMAK)
-
   [PRIMARY] = KEYMAP_STACKED
   (___,          Key_1, Key_2, Key_3, Key_4, Key_5, Key_LEDEffectNext,
    Key_Backtick, Key_Q, Key_W, Key_F, Key_P, Key_G, Key_Tab,
@@ -214,13 +180,6 @@ KEYMAPS(
    M(MACRO_MEH),  Key_K, Key_M, Key_Comma, Key_Period,    Key_Slash,     Key_Minus,
    OSM(RightShift), OSM(LeftAlt), Key_Spacebar, M(MACRO_HYPER),
    ShiftToLayer(FUNCTION)),
-
-#else
-
-#error "No default keymap defined. You should make sure that you have a line like '#define PRIMARY_KEYMAP_QWERTY' in your sketch"
-
-#endif
-
 
   [NUMPAD] =  KEYMAP_STACKED
   (___, ___, ___, ___, ___, ___, ___,
@@ -251,7 +210,16 @@ KEYMAPS(
    Key_PcApplication,          Consumer_Mute,          Consumer_VolumeDecrement, Consumer_VolumeIncrement, ___,             Key_Backslash,    Key_Pipe,
    ___, ___, Key_Enter, ___,
    ___)
-) // KEYMAPS(
+)
+
+#else
+namespace kaleidoscope {
+namespace sketch_exploration {
+void pluginsExploreSketch() {}
+}
+}
+#endif
+
 
 /* Re-enable astyle's indent enforcement */
 // *INDENT-ON*
@@ -276,31 +244,6 @@ static void versionInfoMacro(uint8_t keyState) {
 
 */
 
-static void anyKeyMacro(uint8_t keyState) {
-  static Key lastKey;
-  bool toggledOn = false;
-  if (keyToggledOn(keyState)) {
-    lastKey.keyCode = Key_A.keyCode + (uint8_t)(millis() % 36);
-    toggledOn = true;
-  }
-
-  if (keyIsPressed(keyState))
-    kaleidoscope::hid::pressKey(lastKey, toggledOn);
-}
-
-static void OneShotHyper(uint8_t keyState) {
-  handleKeyswitchEvent(OSM(LeftShift), UNKNOWN_KEYSWITCH_LOCATION, keyState);
-  handleKeyswitchEvent(OSM(LeftControl), UNKNOWN_KEYSWITCH_LOCATION, keyState);
-  handleKeyswitchEvent(OSM(LeftAlt), UNKNOWN_KEYSWITCH_LOCATION, keyState);
-  handleKeyswitchEvent(OSM(LeftGui), UNKNOWN_KEYSWITCH_LOCATION, keyState);
-}
-
-static void OneShotMeh(uint8_t keyState) {
-  handleKeyswitchEvent(OSM(LeftControl), UNKNOWN_KEYSWITCH_LOCATION, keyState);
-  handleKeyswitchEvent(OSM(LeftAlt), UNKNOWN_KEYSWITCH_LOCATION, keyState);
-  handleKeyswitchEvent(OSM(LeftGui), UNKNOWN_KEYSWITCH_LOCATION, keyState);
-}
-
 static void turnLEDsOff(uint8_t key_state) {
   if (keyToggledOn(key_state)) {
     LEDOff.activate();
@@ -322,43 +265,26 @@ void tapDanceAction(uint8_t tap_dance_index, byte row, byte col, uint8_t tap_cou
 }
 
 
-/** macroAction dispatches keymap events that are tied to a macro
-    to that macro. It takes two uint8_t parameters.
-
-    The first is the macro being called (the entry in the 'enum' earlier in this file).
-    The second is the state of the keyswitch. You can use the keyswitch state to figure out
-    if the key has just been toggled on, is currently pressed or if it's just been released.
-
-    The 'switch' statement should have a 'case' for each entry of the macro enum.
-    Each 'case' statement should call out to a function to handle the macro in question.
-
-*/
-
 const macro_t *macroAction(uint8_t macroIndex, uint8_t keyState) {
   switch (macroIndex) {
-
     case MACRO_VERSION_INFO:
       versionInfoMacro(keyState);
       break;
 
-    case MACRO_ANY:
-      anyKeyMacro(keyState);
-      break;
-
     case MACRO_HYPER:
-      OneShotHyper(keyState);
+      return MACRO(D(LeftShift), D(LeftControl), D(LeftAlt), D(LeftGui));
       break;
 
     case MACRO_MEH:
-      OneShotMeh(keyState);
+      return MACRO(D(LeftControl), D(LeftAlt), D(LeftGui));
       break;
 
     case TAB_LEFT:
-      return MACRODOWN(D(LeftGui), D(LeftShift), D(LeftBracket));
+      return MACRODOWN(D(LeftControl), D(LeftShift), D(Tab));
       break;
 
     case TAB_RIGHT:
-      return MACRODOWN(D(LeftGui), D(LeftShift), D(RightBracket));
+      return MACRODOWN(D(LeftControl), D(Tab));
       break;
 
     case LEDS_OFF:
@@ -385,32 +311,6 @@ static kaleidoscope::plugin::LEDSolidColor solidBlue(0, 70, 130);
 static kaleidoscope::plugin::LEDSolidColor solidIndigo(0, 0, 170);
 static kaleidoscope::plugin::LEDSolidColor solidViolet(130, 0, 120);
 
-/** toggleLedsOnSuspendResume toggles the LEDs off when the host goes to sleep,
-   and turns them back on when it wakes up.
-*/
-void toggleLedsOnSuspendResume(kaleidoscope::plugin::HostPowerManagement::Event event) {
-  switch (event) {
-    case kaleidoscope::plugin::HostPowerManagement::Suspend:
-      LEDControl.set_all_leds_to({0, 0, 0});
-      LEDControl.syncLeds();
-      LEDControl.paused = true;
-      break;
-    case kaleidoscope::plugin::HostPowerManagement::Resume:
-      LEDControl.paused = false;
-      LEDControl.refreshAll();
-      break;
-    case kaleidoscope::plugin::HostPowerManagement::Sleep:
-      break;
-  }
-}
-
-/** hostPowerManagementEventHandler dispatches power management events (suspend,
-   resume, and sleep) to other functions that perform action based on these
-   events.
-*/
-void hostPowerManagementEventHandler(kaleidoscope::plugin::HostPowerManagement::Event event) {
-  toggleLedsOnSuspendResume(event);
-}
 
 /** This 'enum' is a list of all the magic combos used by the Model 01's
    firmware The names aren't particularly important. What is important is that
