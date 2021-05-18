@@ -97,11 +97,6 @@
 */
 
 enum { MACRO_VERSION_INFO,
-       MACRO_ANY,
-       MACRO_HYPER,
-       MACRO_MEH,
-       TAB_LEFT,
-       TAB_RIGHT,
        LEDS_OFF
      };
 
@@ -250,6 +245,18 @@ static void turnLEDsOff(uint8_t key_state) {
   }
 }
 
+static void anyKeyMacro(uint8_t keyState) {
+  static Key lastKey;
+  bool toggledOn = false;
+  if (keyToggledOn(keyState)) {
+    lastKey.setKeyCode(Key_A.getKeyCode() + (uint8_t)(millis() % 36));
+    toggledOn = true;
+  }
+
+  if (keyIsPressed(keyState))
+    Kaleidoscope.hid().keyboard().pressKey(lastKey, toggledOn);
+}
+
 void tapDanceAction(uint8_t tap_dance_index, byte row, byte col, uint8_t tap_count,
                     kaleidoscope::plugin::TapDance::ActionType tap_dance_action) {
   switch (tap_dance_index) {
@@ -269,22 +276,6 @@ const macro_t *macroAction(uint8_t macroIndex, uint8_t keyState) {
   switch (macroIndex) {
     case MACRO_VERSION_INFO:
       versionInfoMacro(keyState);
-      break;
-
-    case MACRO_HYPER:
-      return MACRO(D(LeftShift), D(LeftControl), D(LeftAlt), D(LeftGui));
-      break;
-
-    case MACRO_MEH:
-      return MACRO(D(LeftControl), D(LeftAlt), D(LeftGui));
-      break;
-
-    case TAB_LEFT:
-      return MACRODOWN(D(LeftControl), D(LeftShift), D(Tab));
-      break;
-
-    case TAB_RIGHT:
-      return MACRODOWN(D(LeftControl), D(Tab));
       break;
 
     case LEDS_OFF:
